@@ -1,3 +1,4 @@
+local unpack = unpack or table.unpack -- lua 5.2 compat
 local i18n = {}
 
 local store
@@ -67,17 +68,17 @@ local function assertFunctionOrNil(functionName, paramName, value)
   error(msg:format(functionName, paramName, tostring(value), type(value)))
 end
 
-local function defaultPluralizeFunction(locale, count)
-  if not locale then
-    locale = i18n.getLocale()
-    if type(locale) == "table" then
-      locale = locale[1]
+local function defaultPluralizeFunction(loc, count)
+  if not loc then
+    loc = i18n.getLocale()
+    if type(loc) == "table" then
+      loc = loc[1]
     end
   end
-  return plural.get(variants.root(locale), count)
+  return plural.get(variants.root(loc), count)
 end
 
-local function pluralize(t, locale, data)
+local function pluralize(t, loc, data)
   assertPresentOrPlural('interpolatePluralTable', 't', t)
   data = data or {}
   local key
@@ -92,7 +93,7 @@ local function pluralize(t, locale, data)
   if customPluralizeFunction then
     plural_form = customPluralizeFunction(count)
   else
-    plural_form = defaultPluralizeFunction(locale, count)
+    plural_form = defaultPluralizeFunction(loc, count)
   end
   return t[plural_form]
 end
@@ -102,7 +103,7 @@ local function treatNode(node, loc, data)
     local iter = {ipairs(node)}
     node = {}
     for k,v in unpack(iter) do
-      node[k] = treatNode(v, data)
+      node[k] = treatNode(v, loc, data)
     end
   elseif type(node) == 'string' then
     return interpolate(node, data)
