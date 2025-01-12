@@ -154,11 +154,16 @@ Fallbacks
 =========
 
 When a value is not found, the lib has several fallback mechanisms:
+- If the value doesn't exist with the full locale name (e.g. 'es-ES'), it will try with just the root part ('es')
+- If the locale has a 'parent' (e.g. es is the parent of 'es-MX'), the parent is tried
+- If no parents are found, and a 'default' parameter is passed, return it:
 
-* First, it will look in the current locale's parents. For example, if the locale was set to 'en-US' and the key 'msg' was not found there, it will be looked over in 'en'.
-* Second, if the value is not found in the locale ancestry, a 'fallback locale' (by default: 'en') can be used. If the fallback locale has any parents, they will be looked over too.
-* Third, if all the locales have failed, but there is a param called 'default' on the provided data, it will be used.
-* Otherwise the translation will return nil.
+```lua
+i18n('msg', {default = 'Not translated'})                   -- 'Not translated'
+i18n('msg', {default = 'Hello, %{name}!', name = 'Player'}) -- 'Hello, Player!'
+```
+
+- Otherwise the translation will return nil.
 
 The parents of a locale are found by splitting the locale by its hyphens. Other separation characters (spaces, underscores, etc) are not supported.
 
