@@ -1,0 +1,10 @@
+return {
+  include = {
+    'smiti18n/',
+    'spec/'
+  },
+  exclude = {
+    'lua_install',
+    '.luarocks'
+  }
+}
