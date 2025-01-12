@@ -97,7 +97,7 @@ local function pluralize(t, locale, data)
   return t[plural_form]
 end
 
-local function treatNode(node, data)
+local function treatNode(node, loc, data)
   if isArray(node) then
     local iter = {ipairs(node)}
     node = {}
@@ -107,7 +107,18 @@ local function treatNode(node, data)
   elseif type(node) == 'string' then
     return interpolate(node, data)
   elseif isPluralTable(node) then
-    return interpolate(pluralize(node, loc, data), data)
+    -- Make sure that count has a default of 1
+    local newdata
+    if data.count == nil then
+        newdata = {}
+        for key, value in pairs(data) do
+            newdata[key] = value
+        end
+        newdata.count = 1
+    else
+        newdata = data
+    end
+    return interpolate(pluralize(node, loc, newdata), newdata)
   end
   return node
 end
