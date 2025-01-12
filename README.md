@@ -150,7 +150,6 @@ This is particularly useful for:
 - Multi-line status displays
 - Ordered game tutorials
 
-
 Fallbacks
 =========
 
@@ -163,7 +162,52 @@ When a value is not found, the lib has several fallback mechanisms:
 
 The parents of a locale are found by splitting the locale by its hyphens. Other separation characters (spaces, underscores, etc) are not supported.
 
+Multiple Locales
+================
+
 You can also pass a list of locales to `setLocale` to provide multiple options before the fallback locale is used.
+You can specify multiple locales in order of preference.
+This is useful for handling regional variants of languages:
+
+```lua
+-- Set multiple locales in priority order
+i18n.setLocale({'es-419', 'es-ES', 'es'})
+
+-- Translations will be looked up in this order:
+-- 1. Latin American Spanish (es-419)
+-- 2. European Spanish (es-ES)
+-- 3. Generic Spanish (es)
+-- 4. Default fallback locale
+
+-- Example translation table
+i18n.load({
+  ['es-419'] = {
+    greeting = '¡Hola!',
+    cookie = 'galleta'
+  },
+  ['es-ES'] = {
+    greeting = '¡Hola!',
+    cookie = 'galletita'
+  },
+  ['es'] = {
+    greeting = '¡Hola!',
+    thanks = 'gracias'
+  }
+})
+
+i18n('cookie')  -- Returns 'galleta' (found in es-419)
+i18n('thanks')  -- Returns 'gracias' (found in generic es)
+```
+
+This feature is particularly useful for:
+
+- Supporting regional language variants
+- Sharing common translations while allowing regional differences
+- Creating fallback chains for similar languages
+- Efficiently managing partial translations
+
+Each locale in the chain is tried in order before falling back to the default locale.
+Duplicate locales in the chain are automatically removed.
 
 Using language files
 ====================
