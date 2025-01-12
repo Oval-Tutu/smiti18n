@@ -93,6 +93,64 @@ The appropriate rule is chosen by finding the 'root' of the locale used: for exa
 
 If the provided functions are not enough (i.e. invented languages) it's possible to specify a custom pluralization function in the second parameter of setLocale. This function must return 'one', 'few', 'other', etc given a number.
 
+Arrays
+======
+
+Translation values can be arrays containing strings, interpolated values, and plural forms:
+
+```lua
+i18n.load({
+  en = {
+    -- Simple array of strings
+    greetings = {"Hello!", "Hi there!", "Howdy!"},
+
+    -- Arrays with interpolation
+    welcome = {
+      "Welcome to %{game_name}!",
+      "Player: %{player_name}",
+      "Level: %{level}"
+    },
+
+    -- Arrays with plural forms
+    status = {
+      "Game Status:",
+      {
+        one = "%{count} player online",
+        other = "%{count} players online"
+      },
+      {
+        one = "%{lives} life remaining",
+        other = "%{lives} lives remaining"
+      }
+    }
+  }
+})
+
+-- Usage
+i18n.setLocale('en')
+i18n('greetings')  -- Returns: {"Hello!", "Hi there!", "Howdy!"}
+
+i18n('welcome', {
+  game_name = "Adventure Time",
+  player_name = "Jake",
+  level = 5
+}) -- Returns interpolated array
+
+i18n('status', {
+  count = 3,
+  lives = 1
+}) -- Returns array with pluralized elements
+```
+
+Arrays maintain their order and can mix plain strings, interpolated values, and plural forms in any combination.
+This is particularly useful for:
+
+- Random message selection
+- Dialogue sequences
+- Multi-line status displays
+- Ordered game tutorials
+
+
 Fallbacks
 =========
 
