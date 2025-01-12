@@ -11,6 +11,9 @@ on:
         type: "string"
         required: true
 
+env:
+  VERSION: ${{ github.event.inputs.tag || github.ref_name }}
+
 jobs:
   version-check:
     if: github.event_name == 'push' || github.event.inputs.tag != ''
@@ -26,12 +29,10 @@ jobs:
               echo "ERROR: rockspecs directory not found"
               exit 1
           fi
-
-          GIT_VERSION=$(echo ${{ github.ref_name }} | sed 's/^v//')
-          ROCKSPEC="rockspecs/smiti18n-${GIT_VERSION}-1.rockspec"
-
+          VERSION=$(echo ${{ env.VERSION }} | sed 's/^v//')
+          ROCKSPEC="rockspecs/smiti18n-${VERSION}-1.rockspec"
           if [ ! -e "${ROCKSPEC}" ]; then
-              echo "ERROR: No rockspec found for version ${GIT_VERSION}"
+              echo "ERROR: No rockspec found for version ${VERSION}"
               echo "Expected: ${ROCKSPEC}"
               ls -la rockspecs/*.rockspec
               exit 1
@@ -47,13 +48,22 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "VERSION=${{ github.event.inputs.tag }}" >> $GITHUB_ENV
-          else
-            echo "VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
-          fi
+          VERSION=$(echo ${{ env.VERSION }} | sed 's/^v//')
           gh release create "${VERSION}" \
             --draft=false \
             --title "Release ${VERSION}" \
-            --generate-notes \
-            "rockspecs/smiti18n-${VERSION}-1.rockspec"
+            --generate-notes
+      - name: "Setup Lua"
+        uses: jkl1337/gh-actions-lua@v11
+        with:
+          luaVersion: "5.4"
+      - name: "Setup LuaRocks"
+        uses: jkl1337/gh-actions-luarocks@v5
+        with:
+          luaRocksVersion: "3.11.1"
+      - name: "Upload rockspec"
+        env:
+          LUAROCKS_API_KEY: ${{ secrets.LUAROCKS_API_KEY }}
+        run: |
+          VERSION=$(echo ${{ env.VERSION }} | sed 's/^v//')
+          luarocks upload "rockspecs/smiti18n-${VERSION}-1.rockspec" --api-key=${LUAROCKS_API_KEY}

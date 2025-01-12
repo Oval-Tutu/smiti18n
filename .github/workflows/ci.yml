@@ -9,72 +9,39 @@ on:
 
 jobs:
   test:
-    name: Test and check ️✅
+    name: Test and check ️🔎
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        include:
-          - lua-type: "lua"
-            lua-version: "5.1"
-          - lua-type: "lua"
-            lua-version: "5.2"
-          - lua-type: "lua"
-            lua-version: "5.3"
-          - lua-type: "lua"
-            lua-version: "5.4"
-          - lua-type: "luajit"
-            luajit-version: "2.0"
-          - lua-type: "luajit"
-            luajit-version: "2.1"
-
+        lua-version: [
+          "5.1",
+          "5.2",
+          "5.3",
+          "5.4",
+          "luajit"
+        ]
     steps:
     - uses: actions/checkout@v4
-
-    - name: Setup Python
-      uses: actions/setup-python@v5
+    - uses: jkl1337/gh-actions-lua@v11
       with:
-        python-version: '3.x'
-
-    - name: Create and activate virtual environment
-      run: |
-        python -m venv venv
-        source venv/bin/activate
-        echo "VIRTUAL_ENV=$VIRTUAL_ENV" >> $GITHUB_ENV
-        echo "$VIRTUAL_ENV/bin" >> $GITHUB_PATH
-
-    - name: Install hererocks
-      run: pip install hererocks
-
-    - name: Setup Lua
-      run: |
-        mkdir -p lua_install
-        if [[ "${{ matrix.lua-type }}" == "lua" ]]; then
-          hererocks lua_install -r^ --lua=${{ matrix.lua-version }}
-        else
-          hererocks lua_install -r^ --luajit=${{ matrix.luajit-version }}
-        fi
-        echo "$PWD/lua_install/bin" >> $GITHUB_PATH
-
+        luaVersion: "${{ matrix.lua-version }}"
+    - uses: jkl1337/gh-actions-luarocks@v5
+      with:
+        luaRocksVersion: "3.11.1"
     - name: Install dependencies
       run: |
         luarocks install luacheck
         luarocks install busted
         luarocks install luacov
-
     - name: Run tests and checks
       run: |
         luacheck --no-unused-args --std max+busted smiti18n spec
         busted --verbose --coverage
-
     - name: Generate and show coverage report
       run: |
         luacov
         {
-          if [[ "${{ matrix.lua-type }}" == "lua" ]]; then
-            echo "# Test Coverage Summary - Lua ${{ matrix.lua-version }}"
-          else
-            echo "# Test Coverage Summary - LuaJIT ${{ matrix.luajit-version }}"
-          fi
+          echo "# Test Coverage Summary - ${{ matrix.lua-version }}"
           echo ""
           echo "| File | Hits | Missed | Coverage |"
           echo "|------|------|---------|----------|"
