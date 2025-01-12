@@ -1,3 +1,4 @@
+-- luacheck: globals love
 local unpack = unpack or table.unpack -- lua 5.2 compat
 local i18n = {}
 
@@ -26,6 +27,11 @@ local function dotSplit(str)
     fields[length] = c
   end)
   return fields, length
+end
+
+local function hasLove()
+  local success, loveEngine = pcall(function() return love end)
+  return success and type(loveEngine) == 'table' and type(loveEngine.filesystem) == 'table'
 end
 
 local function isPluralTable(t)
@@ -235,10 +241,35 @@ function i18n.load(data)
 end
 
 function i18n.loadFile(path)
-  local chunk = assert(loadfile(path))
-  local data = chunk()
+  local data
+  if hasLove() then
+    -- LÖVE filesystem handling
+    local loveEngine = love  -- store reference to avoid luacheck warning
+    local contents, readErr = loveEngine.filesystem.read(path)
+    if not contents then
+      error("Could not load i18n file: " .. tostring(readErr))
+    end
+    -- Load string as Lua code - use loadstring for 5.1, load for 5.2+
+    local chunk, parseErr = (loadstring or load)(contents, path)
+    if not chunk then
+      error("Could not parse i18n file: " .. tostring(parseErr))
+    end
+    data = chunk()
+  else
+    -- Standard Lua file handling
+    local chunk, err = loadfile(path)
+    if not chunk then
+      error("Could not load i18n file: " .. tostring(err))
+    end
+    data = chunk()
+  end
+
+  if type(data) ~= 'table' then
+    error("i18n file must return a table")
+  end
+
   i18n.load(data)
-end
+ end
 
 setmetatable(i18n, {__call = function(_, ...) return i18n.translate(...) end})
 

@@ -16,10 +16,13 @@ It provides an intuitive API for managing translations, with support for:
 - Multiple locale fallbacks
 - Array-based translations
 - File-based translation loading
+- Seamless LÖVE game engine integration for filesystem paths
 
 ### Requirements
-- Lua 5.1+ or LuaJIT
+- Lua 5.1-5.4 or LuaJIT 2.0-2.1
 - LÖVE 11.0+ (*optional*)
+
+### Quick example
 
 Here's a quick example:
 

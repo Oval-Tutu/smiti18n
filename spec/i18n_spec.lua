@@ -155,12 +155,59 @@ describe('i18n', function()
   end)
 
   describe('loadFile', function()
-    it("Loads a bunch of stuff", function()
+    after_each(function()
+      _G.love = nil
+      i18n.reset()
+    end)
+
+    it("loads a bunch of stuff", function()
       i18n.loadFile('spec/en.lua')
       assert.equal('Hello!', i18n('hello'))
       local balance = i18n('balance', {value = 0})
       assert.equal('Your account balance is 0.', balance)
       assert.same({"one", "two", "three"}, i18n('array'))
+    end)
+
+    it('uses LÖVE filesystem when available', function()
+      _G.love = {
+        filesystem = {
+          read = function(path)
+            if path == 'test.lua' then
+              return [[return { en = { test = "LÖVE File" } }]]
+            end
+            return nil, "File not found"
+          end
+        }
+      }
+
+      i18n.loadFile('test.lua')
+      assert.equal('LÖVE File', i18n('test'))
+    end)
+
+    it('falls back to standard Lua IO when love has no filesystem', function()
+      _G.love = {}
+      i18n.loadFile('spec/en.lua')
+      assert.equal('Hello!', i18n('hello'))
+    end)
+
+    it('errors when file returns non-table', function()
+      assert.error_matches(function()
+        i18n.loadFile('spec/invalid_return.lua')
+      end, "i18n file must return a table")
+    end)
+
+    it('errors when LÖVE file returns non-table', function()
+      _G.love = {
+        filesystem = {
+          read = function(path)
+            return "return 123"
+          end
+        }
+      }
+
+      assert.error_matches(function()
+        i18n.loadFile('test.lua')
+      end, "i18n file must return a table")
     end)
   end)
 
