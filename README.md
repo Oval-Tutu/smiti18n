@@ -1,8 +1,12 @@
-smiti18n.lua
-============
+smiti18n
+========
 
-smiti18n, (*pronouced smitten*), is a very complete i18n library for LÖVE and Lua 💕🌕
-Forked from [i18n.lua](https://github.com/kikito/i18n.lua)
+A very complete internationalization library for Lua with LÖVE support 🌕💕
+
+smiti18n (*pronouced smitten*) is a full-featured i18n library for Lua with [LÖVE](https://love2d.org/) integration.
+It handles hierarchies of tags, accepts entries in several ways (one by one, in a table or in a file), and implements extensive pluralization rules, fallbacks, arrays, and multiple locale support.
+
+Forked from [i18n.lua](https://github.com/kikito/i18n.lua) by Enrique García Cota and includes new features and improvements.
 
 Description
 ===========
@@ -267,4 +271,6 @@ Specs
 =====
 This project uses [busted](https://github.com/Olivine-Labs/busted) for its specs. If you want to run the specs, you will have to install it first. Then just execute the following from the root inspect folder:
 
-    busted
+``` shell
+busted
+```
