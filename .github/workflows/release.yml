@@ -12,17 +12,48 @@ on:
         required: true
 
 jobs:
+  version-check:
+    if: github.event_name == 'push' || github.event.inputs.tag != ''
+    name: "Check versions ⚖️"
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: "Compare Rockspec and Git versions 🟰"
+        run: |
+          if [ ! -d "rockspecs" ]; then
+              echo "ERROR: rockspecs directory not found"
+              exit 1
+          fi
+
+          GIT_VERSION=$(echo ${{ github.ref_name }} | sed 's/^v//')
+          ROCKSPEC="rockspecs/smiti18n-${GIT_VERSION}-1.rockspec"
+
+          if [ ! -e "${ROCKSPEC}" ]; then
+              echo "ERROR: No rockspec found for version ${GIT_VERSION}"
+              echo "Expected: ${ROCKSPEC}"
+              ls -la rockspecs/*.rockspec
+              exit 1
+          fi
+
   publish-release:
+    needs: [version-check]
     name: "Publish Release 📤️"
     runs-on: ubuntu-22.04
     steps:
-    - uses: actions/checkout@v4
-    - name: Publish release ${{ github.ref }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        gh release create "${{ github.ref }}" --draft --generate-notes
-        if [ "$(gh release view "${{ github.ref }}" --json assets --template '{{len .assets}}')" -eq 0 ]; then
-          exit 1
-        fi
-        gh release edit "${{ github.ref }}" --draft=false
+      - uses: actions/checkout@v4
+      - name: "Publish release"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "VERSION=${{ github.event.inputs.tag }}" >> $GITHUB_ENV
+          else
+            echo "VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
+          fi
+          gh release create "${VERSION}" \
+            --draft=false \
+            --title "Release ${VERSION}" \
+            --generate-notes \
+            "rockspecs/smiti18n-${VERSION}-1.rockspec"
