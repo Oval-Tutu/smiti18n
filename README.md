@@ -1,72 +1,279 @@
-smiti18n
-========
+# smiti18n
 
 A very complete internationalization library for Lua with LÖVE support 🌕💕
 
-smiti18n (*pronouced smitten*) is a full-featured i18n library for Lua with [LÖVE](https://love2d.org/) integration.
-It handles hierarchies of tags, accepts entries in several ways (one by one, in a table or in a file), and implements extensive pluralization rules, fallbacks, arrays, and multiple locale support.
+## Introduction
+
+smiti18n (*pronouced smitten*) is a powerful internationalization (i18n) library that helps you create multilingual applications in Lua and [LÖVE](https://love2d.org/).
 
 Forked from [i18n.lua](https://github.com/kikito/i18n.lua) by Enrique García Cota and includes new features and improvements.
 
-Description
-===========
+It provides an intuitive API for managing translations, with support for:
 
-``` lua
+- Variable interpolation in strings
+- Pluralization rules for many languages
+- Hierarchical organization of translations
+- Multiple locale fallbacks
+- Array-based translations
+- File-based translation loading
+
+### Requirements
+- Lua 5.1+ or LuaJIT
+- LÖVE 11.0+ (*optional*)
+
+Here's a quick example:
+
+```lua
 i18n = require 'smiti18n'
 
--- loading stuff
-i18n.set('en.welcome', 'welcome to this program')
+-- Load some translations
 i18n.load({
   en = {
-    good_bye = "good-bye!",
-    age_msg = "your age is %{age}.",
-    phone_msg = {
-      one = "you have one new message.",
-      other = "you have %{count} new messages."
+    greeting = "Hello %{name}!",
+    messages = {
+      one = "You have one new message",
+      other = "You have %{count} new messages"
+    }
+  },
+  es = {
+    greeting = "¡Hola %{name}!",
+    messages = {
+      one = "Tienes un mensaje nuevo",
+      other = "Tienes %{count} mensajes nuevos"
     }
   }
 })
-i18n.loadFile('path/to/your/project/i18n/de.lua') -- load German language file
-i18n.loadFile('path/to/your/project/i18n/fr.lua') -- load French language file
-…         -- section 'using language files' below describes structure of files
 
--- setting the translation context
-i18n.setLocale('en') -- English is the default locale anyway
+-- Set the current locale
+i18n.setLocale('es')
 
--- getting translations
-i18n.translate('welcome') -- Welcome to this program
-i18n('welcome') -- Welcome to this program
-i18n('age_msg', {age = 18}) -- Your age is 18.
-i18n('phone_msg', {count = 1}) -- You have one new message.
-i18n('phone_msg', {count = 2}) -- You have 2 new messages.
-i18n('good_bye') -- Good-bye!
-
+-- Use translations
+print(i18n('greeting', {name = "Luna"}))     -- ¡Hola Luna!
+print(i18n('messages', {count = 3}))         -- Tienes 3 mensajes nuevos
 ```
 
-Interpolation
-=============
+## Installation
 
-You can interpolate variables in 3 different ways:
+### Using LuaRocks
 
-``` lua
--- the most usual one
-i18n.set('variables', 'Interpolating variables: %{name} %{age}')
-i18n('variables', {name='john', age=10}) -- Interpolating variables: john 10
-
-i18n.set('lua', 'Traditional Lua way: %d %s')
-i18n('lua', {1, 'message'}) -- Traditional Lua way: 1 message
-
-i18n.set('combined', 'Combined: %<name>.q %<age>.d %<age>.o')
-i18n('combined', {name='john', age=10}) -- Combined: john 10 12k
+```shell
+luarocks install smiti18n
 ```
 
-Pluralization
-=============
+### Manual Installation
 
-This lib implements the [unicode.org plural rules](http://cldr.unicode.org/index/cldr-spec/plural-rules). Just set the locale you want to use and it will deduce the appropriate pluralization rules:
+#### Option 1: Git Clone
 
-``` lua
-i18n = require 'i18n'
+Clone this repository and copy the `smiti18n` folder into your project as something like `lib/smiti18n`.
+
+```shell
+git clone https://github.com/Oval-Tutu/smiti18n.git
+cd smiti18n
+cp -r smiti18n your-project/lib/
+```
+
+#### Option 2: Download Release
+
+1. Download latest release from [Releases](https://github.com/Oval-Tutu/smiti18n/releases)
+2. Extract the archive
+3. Copy `smiti18n` directory to your project
+
+Project structure after installation:
+
+```
+your-project/
+  ├── lib/
+  │   └── smiti18n/
+  │       ├── init.lua
+  │       ├── interpolate.lua
+  │       ├── plural.lua
+  │       ├── variants.lua
+  │       └── version.lua
+  └── main.lua
+```
+
+#### Using the Library
+
+```lua
+-- Require smiti18n in your code
+local i18n = require 'lib.smiti18n'
+```
+
+### Translation Files
+
+smiti18n supports both single-file and multi-file approaches for managing translations.
+
+#### Single File
+
+Store all translations in one file (e.g., `translations.lua`):
+
+```lua
+-- translations.lua
+return {
+  en = {
+    greeting = "Hello!",
+    messages = {
+      one = "You have one message",
+      other = "You have %{count} messages"
+    }
+  },
+  es = {
+    greeting = "¡Hola!",
+    messages = {
+      one = "Tienes un mensaje",
+      other = "Tienes %{count} mensajes"
+    }
+  }
+}
+
+-- Load translations
+i18n.loadFile('translations.lua')
+```
+
+#### Multiple Files
+
+Organize translations by language (recommended for larger projects):
+
+Here's an example project structure:
+
+```
+i18n/
+  ├── en.lua   -- English translations
+  ├── es.lua   -- Spanish translations
+  └── fr.lua   -- French translations
+```
+
+**`en.lua`**
+```lua
+return {
+  en = {  -- Locale key required
+    greeting = "Hello!",
+    messages = {
+      one = "You have one message",
+      other = "You have %{count} messages"
+    }
+  }
+}
+```
+
+```lua
+…
+i18n.loadFile('i18n/en.lua') -- English translation
+i18n.loadFile('i18n/es.lua') -- Spanish translation
+i18n.loadFile('i18n/fr.lua') -- French translation
+…
+```
+
+#### Key Points
+- Files must include locale key in returned table
+- Can be loaded in any order
+- Later loads override earlier translations
+
+### Locales and Fallbacks
+
+smiti18n provides flexible locale support with automatic fallbacks and regional variants.
+
+#### Locale Naming
+
+- Pattern: `language-REGION` (e.g., 'en-US', 'es-MX', 'pt-BR')
+- Separator: hyphen (-) only
+- Not supported: underscores, spaces, or other separators
+
+#### Fallback Chain
+
+smiti18n implements a robust fallback system:
+
+1. **Current Locale** ('es-MX')
+2. **Parent Locales** (if defined, e.g., 'es-419')
+3. **Root Locale** ('es')
+4. **Default Value** (if provided)
+5. **nil** (if no matches found)
+
+```lua
+-- Example showing fallback chain
+i18n.load({
+  es = {
+    greeting = "¡Hola!",
+  },
+  ["es-MX"] = {
+    farewell = "¡Adiós!"
+  }
+})
+
+i18n.setLocale('es-MX')
+print(i18n('farewell'))                -- "¡Adiós!"    (from es-MX)
+print(i18n('greeting'))                -- "¡Hola!"     (from es)
+print(i18n('missing'))                 -- nil          (not found)
+print(i18n('missing', {
+    default = 'Not found'
+}))                                    -- "Not found"   (default value)
+```
+
+#### Multiple Locales
+
+For handling regional variants, you can specify multiple locales in order of preference:
+
+```lua
+i18n.load({
+  ['es-419'] = { cookie = 'galleta' },    -- Latin American
+  ['es-ES']  = { cookie = 'galletita' },  -- European
+  ['es']     = { thanks = 'gracias' }     -- Generic
+})
+
+-- Set multiple locales in priority order
+i18n.setLocale({'es-419', 'es-ES', 'es'})
+
+i18n('cookie')  -- Returns 'galleta' (from es-419)
+i18n('thanks')  -- Returns 'gracias' (from es)
+```
+
+Key benefits of multiple locales:
+- Handle regional variations (e.g., pt-BR vs pt-PT)
+- Share base translations across regions
+- Create fallback chains (e.g., es-MX → es-419 → es)
+- Support partial translations with automatic fallback
+
+**💡NOTE!** Locales are tried in order of preference, with duplicates automatically removed.
+
+### String Interpolation
+
+smiti18n supports three different styles of variable interpolation:
+
+#### Named Variables (*Recommended*)
+
+Named variables are the recommended approach as they make translations more maintainable and less error-prone.
+
+```lua
+i18n.set('greeting', 'Hello %{name}, you are %{age} years old')
+i18n('greeting', {name = 'Alice', age = 25})  -- Hello Alice, you are 25 years old
+```
+#### Lua Format Specifiers
+```lua
+i18n.set('stats', 'Score: %d, Player: %s')
+i18n('stats', {1000, 'Bob'})  -- Score: 1000, Player: Bob
+```
+#### Advanced Formatting
+```lua
+i18n.set('profile', 'User: %<name>.q | Age: %<age>.d | Level: %<level>.o')
+i18n('profile', {
+    name = 'Charlie',
+    age = 30,
+    level = 15
+})  -- User: Charlie | Age: 30 | Level: 17k
+```
+
+Format modifiers:
+- `.q`: Quotes the value
+- `.d`: Decimal format
+- `.o`: Ordinal format
+
+### Pluralization
+
+smiti18n implements the [CLDR plural rules](http://cldr.unicode.org/index/cldr-spec/plural-rules) for accurate pluralization across different languages. Each language can have different plural categories like 'one', 'few', 'many', and 'other'.
+
+#### Basic Usage
+```lua
+i18n = require 'smiti18n'
 
 i18n.load({
   en = {
@@ -78,26 +285,55 @@ i18n.load({
   ru = {
     msg = {
       one   = "1 сообщение",
-      few   = "%{count} сообщения",
-      many  = "%{count} сообщений",
-      other = "%{count} сообщения"
+      few   = "%{count} сообщения",  -- 2-4 messages
+      many  = "%{count} сообщений",  -- 5-20 messages
+      other = "%{count} сообщения"   -- fallback
     }
   }
 })
 
-i18n('msg', {count = 1}) -- one message
+-- English pluralization
+i18n.setLocale('en')
+print(i18n('msg', {count = 1}))  -- "one message"
+print(i18n('msg', {count = 5}))  -- "5 messages"
+
+-- Russian pluralization
 i18n.setLocale('ru')
-i18n('msg', {count = 5}) -- 5 сообщений
+print(i18n('msg', {count = 1}))  -- "1 сообщение"
+print(i18n('msg', {count = 3}))  -- "3 сообщения"
+print(i18n('msg', {count = 5}))  -- "5 сообщений"
 ```
 
-The appropriate rule is chosen by finding the 'root' of the locale used: for example if the current locale is 'fr-CA', the 'fr' rules will be applied.
+**💡NOTE!** The `count` parameter is required for plural translations.
 
-If the provided functions are not enough (i.e. invented languages) it's possible to specify a custom pluralization function in the second parameter of setLocale. This function must return 'one', 'few', 'other', etc given a number.
+#### Custom Pluralization Rules
 
-Arrays
-======
+For special cases or invented languages, you can define custom pluralization rules by specifying a custom pluralization function in the second parameter of `setLocale()`.
 
-Translation values can be arrays containing strings, interpolated values, and plural forms:
+```lua
+-- Custom pluralization for a constructed language
+local customPlural = function(n)
+  if n == 0 then return 'zero' end
+  if n == 1 then return 'one' end
+  if n > 1000 then return 'many' end
+  return 'other'
+end
+
+i18n.setLocale('conlang', customPlural)
+```
+
+This function must return a plural category when given a number.
+Available plural categories:
+- `zero`: For languages with special handling of zero
+- `one`: Singular form
+- `two`: Special form for two items
+- `few`: For languages with special handling of small numbers
+- `many`: For languages with special handling of large numbers
+- `other`: Default fallback form
+
+### Arrays
+
+Translation values can be arrays for handling ordered collections of strings with support for interpolation and pluralization.
 
 ```lua
 i18n.load({
@@ -105,172 +341,97 @@ i18n.load({
     -- Simple array of strings
     greetings = {"Hello!", "Hi there!", "Howdy!"},
 
-    -- Arrays with interpolation
-    welcome = {
-      "Welcome to %{game_name}!",
-      "Player: %{player_name}",
-      "Level: %{level}"
-    },
+    -- Get a random greeting
+    print(i18n('greetings')[math.random(#i18n('greetings'))])
+  }
+})
+```
 
-    -- Arrays with plural forms
-    status = {
-      "Game Status:",
+#### Features
+
+Arrays support:
+
+- Plain strings
+- Interpolated values
+- Plural forms
+- Nested arrays
+- Mixed content types
+
+#### Common Use Cases
+
+1. **Dialogue Systems**
+```lua
+i18n.load({
+  en = {
+    dialogue = {
+      "Detective: What brings you here?",
+      "Witness: I saw everything %{time}.",
       {
-        one = "%{count} player online",
-        other = "%{count} players online"
-      },
-      {
-        one = "%{lives} life remaining",
-        other = "%{lives} lives remaining"
+        one = "Detective: Just %{count} witness?",
+        other = "Detective: Already %{count} witnesses."
       }
     }
   }
 })
 
--- Usage
-i18n.setLocale('en')
-i18n('greetings')  -- Returns: {"Hello!", "Hi there!", "Howdy!"}
-
-i18n('welcome', {
-  game_name = "Adventure Time",
-  player_name = "Jake",
-  level = 5
-}) -- Returns interpolated array
-
-i18n('status', {
-  count = 3,
-  lives = 1
-}) -- Returns array with pluralized elements
+-- Play through dialogue sequence
+for _, line in ipairs(i18n('dialogue', {time = "last night", count = 1})) do
+  print(line)
+end
 ```
 
-Arrays maintain their order and can mix plain strings, interpolated values, and plural forms in any combination.
-This is particularly useful for:
-
-- Random message selection
-- Dialogue sequences
-- Multi-line status displays
-- Ordered game tutorials
-
-Fallbacks
-=========
-
-When a value is not found, the lib has several fallback mechanisms:
-- If the value doesn't exist with the full locale name (e.g. 'es-ES'), it will try with just the root part ('es')
-- If the locale has a 'parent' (e.g. es is the parent of 'es-MX'), the parent is tried
-- If no parents are found, and a 'default' parameter is passed, return it:
+2. **Tutorial Steps**
 
 ```lua
-i18n('msg', {default = 'Not translated'})                   -- 'Not translated'
-i18n('msg', {default = 'Hello, %{name}!', name = 'Player'}) -- 'Hello, Player!'
-```
-
-- Otherwise the translation will return nil.
-
-The parents of a locale are found by splitting the locale by its hyphens. Other separation characters (spaces, underscores, etc) are not supported.
-
-Multiple Locales
-================
-
-You can also pass a list of locales to `setLocale` to provide multiple options before the fallback locale is used.
-You can specify multiple locales in order of preference.
-This is useful for handling regional variants of languages:
-
-```lua
--- Set multiple locales in priority order
-i18n.setLocale({'es-419', 'es-ES', 'es'})
-
--- Translations will be looked up in this order:
--- 1. Latin American Spanish (es-419)
--- 2. European Spanish (es-ES)
--- 3. Generic Spanish (es)
--- 4. Default fallback locale
-
--- Example translation table
 i18n.load({
-  ['es-419'] = {
-    greeting = '¡Hola!',
-    cookie = 'galleta'
-  },
-  ['es-ES'] = {
-    greeting = '¡Hola!',
-    cookie = 'galletita'
-  },
-  ['es'] = {
-    greeting = '¡Hola!',
-    thanks = 'gracias'
+  en = {
+    tutorial = {
+      "Welcome to %{game_name}!",
+      {
+        one = "You have %{lives} life - be careful!",
+        other = "You have %{lives} lives remaining."
+      },
+      "Use WASD to move",
+      "Press SPACE to jump"
+    }
   }
 })
-
-i18n('cookie')  -- Returns 'galleta' (found in es-419)
-i18n('thanks')  -- Returns 'gracias' (found in generic es)
 ```
 
-This feature is particularly useful for:
+3. **Status Displays**
 
-- Supporting regional language variants
-- Sharing common translations while allowing regional differences
-- Creating fallback chains for similar languages
-- Efficiently managing partial translations
-
-Each locale in the chain is tried in order before falling back to the default locale.
-Duplicate locales in the chain are automatically removed.
-
-Using language files
-====================
-
-It might be a good idea to store each translation in a different file. This is supported via the 'i18n.loadFile' directive:
-
-``` lua
-…
-i18n.loadFile('path/to/your/project/i18n/de.lua') -- German translation
-i18n.loadFile('path/to/your/project/i18n/en.lua') -- English translation
-i18n.loadFile('path/to/your/project/i18n/fr.lua') -- French translation
-…
-```
-
-The German language file 'de.lua' should read:
-
-``` lua
-return {
-  de = {
-    good_bye = "Auf Wiedersehen!",
-    age_msg = "Ihr Alter beträgt %{age}.",
-    phone_msg = {
-      one = "Sie haben eine neue Nachricht.",
-      other = "Sie haben %{count} neue Nachrichten."
+```lua
+i18n.load({
+  en = {
+    status = {
+      "=== Game Status ===",
+      "Player: %{name}",
+      {
+        one = "%{coins} coin collected",
+        other = "%{coins} coins collected"
+      },
+      "Level: %{level}",
+      "=================="
     }
   }
-}
+})
 ```
 
-If desired, you can also store all translations in one single file (eg. 'translations.lua'):
+#### Tips
+- Arrays maintain their order
+- Access individual elements with numeric indices
+- Use `#` operator to get array length
+- Combine with `math.random()` for random selection
+- Arrays can be nested for complex dialogue trees
 
-``` lua
-return {
-  de = {
-    good_bye = "Auf Wiedersehen!",
-    age_msg = "Ihr Alter beträgt %{age}.",
-    phone_msg = {
-      one = "Sie haben eine neue Nachricht.",
-      other = "Sie haben %{count} neue Nachrichten."
-    }
-  },
-  fr = {
-    good_bye = "Au revoir !",
-    age_msg = "Vous avez %{age} ans.",
-    phone_msg = {
-      one = "Vous avez une nouveau message.",
-      other = "Vous avez %{count} nouveaux messages."
-    }
-  },
-  …
-}
-```
+## Contributing
 
-Specs
-=====
+Contributions are welcome! Please feel free to submit a pull request.
+
+## Specs
+
 This project uses [busted](https://github.com/Olivine-Labs/busted) for its specs. If you want to run the specs, you will have to install it first. Then just execute the following from the root inspect folder:
 
-``` shell
+```shell
 busted
 ```
