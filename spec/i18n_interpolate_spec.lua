@@ -1,8 +1,8 @@
 require 'spec.fixPackagePath'
 
-local interpolate = require 'i18n.interpolate'
+local interpolate = require 'smiti18n.interpolate'
 
-describe('i18n.interpolate', function()
+describe('smiti18n.interpolate', function()
   it("exists", function()
     assert.equal('table', type(interpolate))
   end)

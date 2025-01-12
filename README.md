@@ -1,15 +1,14 @@
-i18n.lua
-========
+smiti18n.lua
+============
 
-[![Build Status](https://travis-ci.org/kikito/i18n.lua.png?branch=master)](https://travis-ci.org/kikito/i18n.lua)
-
-A very complete i18n lib for Lua
+smiti18n, (*pronouced smitten*), is a very complete i18n library for LÖVE and Lua 💕🌕
+Forked from [i18n.lua](https://github.com/kikito/i18n.lua)
 
 Description
 ===========
 
 ``` lua
-i18n = require 'i18n'
+i18n = require 'smiti18n'
 
 -- loading stuff
 i18n.set('en.welcome', 'welcome to this program')
@@ -56,8 +55,6 @@ i18n('lua', {1, 'message'}) -- Traditional Lua way: 1 message
 i18n.set('combined', 'Combined: %<name>.q %<age>.d %<age>.o')
 i18n('combined', {name='john', age=10}) -- Combined: john 10 12k
 ```
-
-
 
 Pluralization
 =============

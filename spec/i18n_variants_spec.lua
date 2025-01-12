@@ -1,6 +1,6 @@
-local variants = require 'i18n.variants'
+local variants = require 'smiti18n.variants'
 
-describe("i18n.variants", function()
+describe("smiti18n.variants", function()
   it("is a table", function()
     assert.equal('table', type(variants))
   end)
