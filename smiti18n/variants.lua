@@ -6,13 +6,6 @@ local function reverse(arr, length)
   return result, length
 end
 
-local function concat(arr1, len1, arr2, len2)
-  for i = 1, len2 do
-    arr1[len1 + i] = arr2[i]
-  end
-  return arr1, len1 + len2
-end
-
 function variants.ancestry(locale)
   local result, length, accum = {},0,nil
   locale:gsub("[^%-]+", function(c)
