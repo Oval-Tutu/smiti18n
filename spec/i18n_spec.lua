@@ -1,6 +1,6 @@
 require 'spec.fixPackagePath'
 
-local i18n = require 'i18n'
+local i18n = require 'smiti18n'
 
 describe('i18n', function()
 

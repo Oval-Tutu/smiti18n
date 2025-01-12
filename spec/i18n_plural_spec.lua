@@ -1,8 +1,8 @@
 require 'spec.fixPackagePath'
 
-local plural = require 'i18n.plural'
+local plural = require 'smiti18n.plural'
 
-describe('i18n.plural', function()
+describe('smiti18n.plural', function()
   before_each(plural.reset)
 
   it("exists", function()
