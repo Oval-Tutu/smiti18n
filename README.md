@@ -59,6 +59,8 @@ print(i18n('messages', {count = 3}))         -- Tienes 3 mensajes nuevos
 
 ### Using LuaRocks
 
+[smiti18n is available on LuaRocks](https://luarocks.org/modules/flexiondotorg/smiti18n). You can install it with the following command:
+
 ```shell
 luarocks install smiti18n
 ```
