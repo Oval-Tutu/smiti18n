@@ -44,6 +44,12 @@ jobs:
       run: |
         luacov
         cat luacov.report.out
+        cp luacov.report.out luacov-${{ matrix.lua-version }}.txt
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
+      with:
+        name: luacov-${{ matrix.lua-version }}.txt
+        path: luacov-${{ matrix.lua-version }}.txt
     - name: Create coverage table script
       run: |
         cat > coverage-table.lua << 'EOF'
@@ -75,7 +81,6 @@ jobs:
         io.open(os.getenv("GITHUB_STEP_SUMMARY"), "w"):write(table.concat(output))
         EOF
         chmod +x coverage-table.lua
-
     - name: Create coverage summary
       env:
         LUA_VERSION: ${{ matrix.lua-version }}
