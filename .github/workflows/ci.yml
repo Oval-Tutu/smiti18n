@@ -3,6 +3,9 @@ name: Test 🧪
 on:
   push:
     branches: [ master ]
+    paths:
+      - 'smiti18n/**'
+      - 'spec/**'
   pull_request:
     branches: [ master ]
   workflow_dispatch:
