@@ -15,8 +15,11 @@ local interpolate = require(currentFilePath .. '.interpolate')
 local variants    = require(currentFilePath .. '.variants')
 local version     = require(currentFilePath .. '.version')
 
-i18n.plural, i18n.interpolate, i18n.variants, i18n.version, i18n._VERSION =
-  plural, interpolate, variants, version, version
+i18n.plural = plural
+i18n.interpolate = interpolate
+i18n.variants = variants
+i18n.version = version
+i18n._VERSION = version
 
 -- private stuff
 
@@ -75,12 +78,6 @@ local function assertFunctionOrNil(functionName, paramName, value)
 end
 
 local function defaultPluralizeFunction(loc, count)
-  if not loc then
-    loc = i18n.getLocale()
-    if type(loc) == "table" then
-      loc = loc[1]
-    end
-  end
   return plural.get(variants.root(loc), count)
 end
 
