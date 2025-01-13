@@ -2,6 +2,8 @@
 
 A very complete internationalization library for Lua with LÖVE support 🌕💕
 
+[![Test 🧪](https://github.com/Oval-Tutu/smiti18n/actions/workflows/ci.yml/badge.svg)](https://github.com/Oval-Tutu/smiti18n/actions/workflows/ci.yml) [![Lua Versions](https://img.shields.io/badge/Lua-5.1%20%7C%205.2%20%7C%205.3%20%7C%205.4%20%7C%20JIT-blue)](https://github.com/Oval-Tutu/smiti18n) [![LuaRocks](https://img.shields.io/luarocks/v/flexiondotorg/smiti18n)](https://luarocks.org/modules/flexiondotorg/smiti18n) [![License](https://img.shields.io/github/license/Oval-Tutu/smiti18n)](https://github.com/Oval-Tutu/smiti18n/blob/master/LICENSE)
+
 ## Introduction
 
 smiti18n (*pronouced smitten*) is a powerful internationalization (i18n) library that helps you create multilingual applications in Lua and [LÖVE](https://love2d.org/).
