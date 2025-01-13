@@ -28,6 +28,7 @@ Requirements
 - Lua 5.1-5.4 or LuaJIT 2.0-2.1
 - LÖVE 11.0+ (optional)
   ]],
+  labels = { "i18n", "love" },
   homepage = "https://github.com/Oval-Tutu/smiti18n",
   license = "MIT"
 }
