@@ -68,6 +68,40 @@ describe('i18n', function()
         assert.equal('bonjour world', i18n('msg', {default='bonjour %{who}', who="world"}))
       end)
 
+      it('throws errors on invalid inputs', function()
+        assert.error(function()
+          i18n.set('en.test', 123)  -- Number should error
+        end)
+        assert.error(function()
+          i18n.set('en.test', true) -- Boolean should error
+        end)
+      end)
+    end)
+
+    describe("locale fallback", function()
+      local TEST_KEY = 'test_fallback.hello'
+
+      before_each(function()
+        i18n.setLocale('en') -- Reset to default
+        i18n.set('en.' .. TEST_KEY, 'Hello')
+        i18n.set('fr.' .. TEST_KEY, 'Bonjour')
+      end)
+
+      it("falls back to default locale", function()
+        i18n.setLocale("unknown")
+        local result = i18n.translate(TEST_KEY)
+        assert.equals("Hello", result)
+      end)
+
+      it("handles table locales", function()
+        i18n.setLocale({"fr", "en"})
+        local result = i18n.translate(TEST_KEY)
+        assert.equals("Bonjour", result)
+      end)
+
+      after_each(function()
+        i18n.setLocale('en')
+      end)
     end)
 
     describe('when there is a count-type translation', function()
@@ -184,10 +218,46 @@ describe('i18n', function()
       assert.equal('LÖVE File', i18n('test'))
     end)
 
+    it('handles LÖVE filesystem errors', function()
+      _G.love = {
+        filesystem = {
+          read = function(path)
+            print("DEBUG: Triggering file not found error") -- Add debug if needed
+            return nil, "File not found error"
+          end
+        }
+      }
+
+      assert.error_matches(function()
+        i18n.loadFile('nonexistent.lua')
+      end, "Could not load i18n file: File not found error")
+    end)
+
+    it('handles LÖVE parse errors', function()
+      _G.love = {
+        filesystem = {
+          read = function(path)
+            return "this is not valid lua"
+          end
+        }
+      }
+
+      assert.error_matches(function()
+        i18n.loadFile('bad.lua')
+      end, "Could not parse i18n file:")
+    end)
+
     it('falls back to standard Lua IO when love has no filesystem', function()
       _G.love = {}
       i18n.loadFile('spec/en.lua')
       assert.equal('Hello!', i18n('hello'))
+    end)
+
+    it('handles filesystem read errors for standard Lua', function()
+      local badPath = 'nonexistent_file.lua'
+      assert.error_matches(function()
+        i18n.loadFile(badPath)
+      end, "Could not load i18n file:")
     end)
 
     it('errors when file returns non-table', function()
@@ -291,6 +361,28 @@ describe('i18n', function()
         "It's mostly safe!",
      },i18n('safe',{count = 2}))
     end)
+
+    it("Handles mixed data in pluralization", function()
+      i18n.set('en.msg', {
+        one = "Count is %{count}, name is %{name}",
+        other = "Counts are %{count}, name is %{name}"
+      })
+      assert.equal(
+        "Count is 1, name is test",
+        i18n('msg', {count = 1, name = "test"})
+      )
+    end)
+
+    it("copies data correctly for pluralization", function()
+      i18n.set('en.test', {
+        one = "Count: %{count}",
+        other = "Count: %{count}"
+      })
+      local data = {count = 1}
+      assert.equal("Count: 1", i18n('test', data))
+      data.count = 2  -- Modify original data
+      assert.equal("Count: 2", i18n('test', data))
+    end)
   end)
 
   describe('set/getFallbackLocale', function()
@@ -332,6 +424,12 @@ describe('i18n', function()
       assert.equal('Hello!', i18n('hello'))
     end)
 
+    it("handles table locales", function()
+      i18n.setLocale({'fr-CA', 'fr'})
+      i18n.set('fr.msg', {one = '%{count} thing', other = '%{count} things'})
+      assert.equal('1 thing', i18n('msg', {count = 1}))
+    end)
+
     describe("when a second parameter is passed", function()
       it("throws an error if the second param is not a function", function()
         assert.error(function() i18n.setLocale('wookie', 1) end)
@@ -352,4 +450,50 @@ describe('i18n', function()
     end)
   end)
 
+  -- New tests to improve coverage
+  describe('defaultPluralizeFunction', function()
+    it("handles table locales correctly", function()
+      i18n.setLocale({'en-US', 'en'})
+      i18n.set('en.msg', {
+        one = "One item",
+        other = "Multiple items"
+      })
+      assert.equal("One item", i18n('msg', {count = 1}))
+      assert.equal("Multiple items", i18n('msg', {count = 2}))
+    end)
+  end)
+
+  describe('i18n additional tests', function()
+    before_each(function() i18n.reset() end)
+
+    describe('error handling', function()
+        it('throws an error when setting a non-string or non-table value', function()
+            assert.error(function() i18n.set('en.test', 123) end)
+            assert.error(function() i18n.set('en.test', true) end)
+        end)
+
+        it('throws an error when setting an invalid locale', function()
+            assert.error(function() i18n.setLocale(123) end)
+            assert.error(function() i18n.setLocale('') end)
+        end)
+
+        it('throws an error when setting an invalid fallback locale', function()
+            assert.error(function() i18n.setFallbackLocale(123) end)
+            assert.error(function() i18n.setFallbackLocale('') end)
+        end)
+
+        it('throws an error when setting a non-function custom pluralize function', function()
+            assert.error(function() i18n.setLocale('en', 123) end)
+            assert.error(function() i18n.setLocale('en', 'not a function') end)
+        end)
+    end)
+
+    describe('defaultPluralizeFunction', function()
+        it('uses the default locale when locale is not provided', function()
+            i18n.set('en.msg', {one = "One item", other = "Multiple items"})
+            assert.equal("One item", i18n('msg', {count = 1}))
+            assert.equal("Multiple items", i18n('msg', {count = 2}))
+        end)
+    end)
+  end)
 end)
