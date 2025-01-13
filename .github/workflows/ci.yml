@@ -44,10 +44,39 @@ jobs:
       run: |
         luacov
         cat luacov.report.out
-        {
-          echo "# Test Coverage Summary - ${{ matrix.lua-version }}"
-          echo ""
-          echo "| File | Hits | Missed | Coverage |"
-          echo "|------|------|---------|----------|"
-          grep "^smiti18n/.*[0-9]" luacov.report.out | sort -u | sed -E 's/^([^|]+[^ ])[[:space:]]+([0-9]+)[[:space:]]+([0-9]+)[[:space:]]+([0-9.]+)%[[:space:]]*$/| \1 | \2 | \3 | \4% |/'
-        } >> $GITHUB_STEP_SUMMARY
+    - name: Create coverage table script
+      run: |
+        cat > coverage-table.lua << 'EOF'
+        local output = {
+          string.format("# Test Coverage Summary - %s\n", os.getenv("LUA_VERSION")),
+          "| File | Hits | Missed | Coverage |\n",
+          "|------|------|---------|----------|\n"
+        }
+
+        local rows = {}
+        local total_line = ""
+        for line in io.lines("luacov.report.out") do
+          local file, hits, missed, coverage = line:match("^([%w%p]+)%s+(%d+)%s+(%d+)%s+([%d%.]+)%%")
+          if file then
+            local row = string.format("| %s | %s | %s | %s%% |\n", file, hits, missed, coverage)
+            if file == "Total" then
+              total_line = row
+            else
+              table.insert(rows, row)
+            end
+          end
+        end
+
+        table.sort(rows)
+        for _, row in ipairs(rows) do
+          table.insert(output, row)
+        end
+        table.insert(output, total_line)
+        io.open(os.getenv("GITHUB_STEP_SUMMARY"), "w"):write(table.concat(output))
+        EOF
+        chmod +x coverage-table.lua
+
+    - name: Create coverage summary
+      env:
+        LUA_VERSION: ${{ matrix.lua-version }}
+      run: lua coverage-table.lua
