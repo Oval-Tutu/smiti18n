@@ -8,19 +8,22 @@ A very complete internationalization library for Lua with LÖVE support 🌕💕
 
 smiti18n (*pronounced smitten*) is a powerful internationalization (i18n) library that helps you create multilingual applications in Lua and [LÖVE](https://love2d.org/).
 
-Forked from [i18n.lua](https://github.com/kikito/i18n.lua) by Enrique García Cota with a [collection of community contributions incorporated](https://github.com/kikito/i18n.lua/pulls).
-The number, date and time formatting has been ported from [Babel](https://github.com/LuaDist-testing/babel) and the test suite extended.
+**Core Features:** 🚀
+- 📁 Smart file-based loading & fallbacks
+- 🔠 Rich text interpolation & pluralization
+- 🌏 Locale-aware formatting for numbers, dates and currency
+- 💕 Built for LÖVE game engine
 
-It provides an intuitive API for managing translations, with support for:
+**Rich Game Content:** 🎮
+- 💬 Complex dialogue support:
+  - Branching conversations
+  - Character-specific translations
+  - Context-aware responses
+- 🎯 53 locales, 650+ game-specific phrases
+- 📊 36 regional number formats
 
-- File-based translation loading
-- Hierarchical organization of translations
-- Multiple locale fallbacks
-- Variable interpolation in strings
-- Pluralization rules for many languages
-- Array-based translations
-- Locale-aware number, date, and currency formatting
-- Seamless LÖVE game engine integration for filesystem paths
+An intuitive API for managing translations forked from [i18n.lua](https://github.com/kikito/i18n.lua) by Enrique García Cota incorporated a [collection of community contributions](https://github.com/kikito/i18n.lua/pulls).
+The number, date and time formatting has been ported from [Babel](https://github.com/LuaDist-testing/babel). Includes translations from [PolyglotGamedev](https://github.com/PolyglotGamedev). Significantly expanded test coverage and documentation.
 
 ### Requirements
 
