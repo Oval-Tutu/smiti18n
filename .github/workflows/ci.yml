@@ -4,6 +4,7 @@ on:
   push:
     branches: [ master ]
     paths:
+      - 'locales/**'
       - 'smiti18n/**'
       - 'spec/**'
   pull_request:
