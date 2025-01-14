@@ -237,13 +237,6 @@ function i18n.getLocale()
   return locale
 end
 
-function i18n.reset()
-  store = {}
-  plural.reset()
-  i18n.setLocale(defaultLocale)
-  i18n.setFallbackLocale(defaultLocale)
-end
-
 function i18n.load(data)
   recursiveLoad(nil, data)
 end
@@ -277,7 +270,7 @@ function i18n.loadFile(path)
   end
 
   i18n.load(data)
- end
+end
 
 -- format configuration setters
 local function getFormatConfig()
