@@ -217,7 +217,8 @@ describe('i18n', function()
     end)
 
     it("loads a bunch of stuff", function()
-      i18n.loadFile('spec/en.lua')
+      i18n.loadFile('spec/en-UK.lua')
+      i18n.setLocale('en-UK')
       assert.equal('Hello!', i18n('hello'))
       local balance = i18n('balance', {value = 0})
       assert.equal('Your account balance is 0.', balance)
@@ -231,7 +232,6 @@ describe('i18n', function()
             if path == 'test.lua' then
               return [[return { en = { test = "LÖVE File" } }]]
             end
-            return nil, "File not found"
           end
         }
       }
@@ -244,7 +244,6 @@ describe('i18n', function()
       _G.love = {
         filesystem = {
           read = function(path)
-            print("DEBUG: Triggering file not found error") -- Add debug if needed
             return nil, "File not found error"
           end
         }
@@ -271,7 +270,8 @@ describe('i18n', function()
 
     it('falls back to standard Lua IO when love has no filesystem', function()
       _G.love = {}
-      i18n.loadFile('spec/en.lua')
+      i18n.loadFile('spec/en-UK.lua')
+      i18n.setLocale('en-UK')
       assert.equal('Hello!', i18n('hello'))
     end)
 
@@ -442,7 +442,8 @@ describe('i18n', function()
     end)
 
     it("does NOT modify loadFile", function()
-      i18n.loadFile('spec/en.lua')
+      i18n.loadFile('spec/en-UK.lua')
+      i18n.setLocale('en-UK')
       assert.equal('Hello!', i18n('hello'))
     end)
 

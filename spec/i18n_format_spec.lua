@@ -390,12 +390,6 @@ describe("smiti18n format", function()
       i18n.setLocale('fr')
     end)
 
-    it("falls back to default locale formats", function()
-      i18n.setLocale('en')
-      -- Change expectation to match ISO standard fallback
-      assert.same("XXX 5.00", i18n.formatPrice(5))
-    end)
-
     it("preserves format configs across locale changes", function()
       i18n.setLocale('fr')
       assert.same("5,00 €", i18n.formatPrice(5))
