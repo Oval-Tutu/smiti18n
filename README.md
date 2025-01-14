@@ -23,6 +23,7 @@ It provides an intuitive API for managing translations, with support for:
 - Seamless LÖVE game engine integration for filesystem paths
 
 ### Requirements
+
 - Lua 5.1-5.4 or LuaJIT 2.0-2.1
 - LÖVE 11.0+ (*optional*)
 
@@ -435,122 +436,66 @@ i18n.load({
 
 ### Formats
 
-The library provides utilities for formatting numbers, prices and dates according to locale conventions. If no locale-specific formats are defined, the library falls back to ISO standard formats.
-
-#### Default ISO Standards
-- Numbers: ISO 31-0 (space thousands separator, comma decimal point)
-- Currency: ISO 4217 (XXX for unknown currency)
-- Dates: ISO 8601 (YYYY-MM-DDThh:mm:ss)
-
-#### Numbers and Currency
+The library provides utilities for formatting numbers, prices and dates according to locale conventions. Formats are configured through locale files using the `_formats` key. If no locale-specific formats are defined, the library falls back to ISO standard formats.
 
 ```lua
--- Configure number format (overrides ISO defaults)
-i18n.setNumberFormat({
-  fract_digits = 2,
-  thousand_separator = ",",
-  decimal_symbol = "."
-})
-
--- Basic number formatting
-local formatted = i18n.formatNumber(1234.56)  -- "1,234.56"
-
--- Configure price format
-i18n.setPriceFormat({
-  symbol = "$",
-  negative_format = "-%c%q",
-  fract_digits = 2
-})
-
--- Price formatting with currency symbol
-local price = i18n.formatPrice(-99.99)  -- "-$99.99"
+-- Example locale file (en-UK.lua)
+return {
+  ["en-UK"] = {
+    _formats = {
+      currency = {
+        symbol = "£",
+        decimal_symbol = ".",
+        thousand_separator = ",",
+        positive_format = "%c %p%q"  -- £ 99.99
+      },
+      number = {
+        decimal_symbol = ".",
+        thousand_separator = ","
+      },
+      date_time = {
+        long_date = "%l %d %F %Y",  -- Monday 25 March 2024
+        short_time = "%H:%M"        -- 15:45
+      }
+    }
+  }
+}
 ```
 
-#### Date and Time
+#### Usage
 
 ```lua
--- Basic date formatting (ISO 8601 by default)
-local today = i18n.formatDate()  -- "2024-03-25T00:00:00"
+i18n.loadFile('locales/en-UK.lua')
+i18n.setLocale('en-UK')
 
--- Custom date/time patterns
-local timestamp = i18n.formatDate("%H:%i:%s")  -- "15:45:30"
-local longDate = i18n.formatDate("%l, %F %d, %Y")  -- "Monday, March 25, 2024"
+-- Numbers
+local num = i18n.formatNumber(1234.56)  -- "1,234.56"
 
--- With custom format configuration
-i18n.setDateFormat({
-  long_day_names = {"Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"},
-  long_month_names = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-                     "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"}
-})
+-- Currency
+local price = i18n.formatPrice(99.99)   -- "£ 99.99"
+
+-- Dates
+local date = i18n.formatDate("long_date")  -- "Monday 25 March 2024"
 ```
 
-#### Tips
-### Plan
-1. Update format intro paragraph
-2. Add ISO fallback section
-3. Update default configuration tip
-4. Add specific ISO standard references
+#### ISO Fallbacks
 
-```markdown
-### Formats
+When no locale formats are configured, falls back to:
 
-The library provides utilities for formatting numbers, prices and dates according to locale conventions. If no locale-specific formats are defined, the library falls back to ISO standard formats.
+- Numbers: ISO 31-0 (space separator, point decimal) - "1 234.56"
+- Currency: ISO 4217 (XXX symbol) - "XXX 99.99"
+- Dates: ISO 8601 - "2024-03-25T15:45:30"
 
-#### Default ISO Standards
-- Numbers: ISO 31-0 (space thousands separator, comma decimal point)
-- Currency: ISO 4217 (XXX for unknown currency)
-- Dates: ISO 8601 (YYYY-MM-DDThh:mm:ss)
+#### Format Patterns
 
-#### Numbers and Currency
+Dates use [strftime](https://strftime.org/) codes: `%Y` year, `%m` month, `%d` day, `%H` hour, `%M` minute.
 
-```lua
--- Configure number format (overrides ISO defaults)
-i18n.setNumberFormat({
-  fract_digits = 2,
-  thousand_separator = ",",
-  decimal_symbol = "."
-})
+- Currency patterns use:
+  - `%c` - currency symbol
+  - `%q` - formatted amount
+  - `%p` - polarity sign (+/-)
 
--- Basic number formatting
-local formatted = i18n.formatNumber(1234.56)  -- "1,234.56"
-
--- Configure price format
-i18n.setPriceFormat({
-  symbol = "$",
-  negative_format = "-%c%q",
-  fract_digits = 2
-})
-
--- Price formatting with currency symbol
-local price = i18n.formatPrice(-99.99)  -- "-$99.99"
-```
-
-#### Date and Time
-
-```lua
--- Basic date formatting (ISO 8601 by default)
-local today = i18n.formatDate()  -- "2024-03-25T00:00:00"
-
--- Custom date/time patterns
-local timestamp = i18n.formatDate("%H:%i:%s")  -- "15:45:30"
-local longDate = i18n.formatDate("%l, %F %d, %Y")  -- "Monday, March 25, 2024"
-
--- With custom format configuration
-i18n.setDateFormat({
-  long_day_names = {"Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"},
-  long_month_names = {"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-                     "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"}
-})
-```
-
-#### Tips
-- Date patterns use strftime-style format codes
-- Prices automatically handle negative amounts and currency positioning
-- All formats can be configured per-locale
-- Formats fall back to ISO standards if not configured:
-  - Numbers: space separator, comma decimal (1 234,56)
-  - Currency: XXX symbol (123,00 XXX)
-  - Dates: YYYY-MM-DDThh:mm:ss
+For a complete reference implementation of all format options, see [spec/en-UK.lua](https://github.com/Oval-Tutu/smiti18n/blob/master/spec/en-UK.lua).
 
 ## Contributing
 
