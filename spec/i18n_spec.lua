@@ -188,6 +188,28 @@ describe('i18n', function()
     end)
   end)
 
+  describe('format configuration', function()
+    before_each(function()
+      i18n.reset()
+    end)
+
+    it('allows direct format configuration and retrieval', function()
+      -- Test format configuration
+      local formats = {
+        currency = {
+          symbol = "€",
+          name = "Euro"
+        }
+      }
+      i18n.configure(formats)
+
+      -- Test config retrieval
+      local config = i18n.getConfig()
+      assert.equal("€", config.currency.symbol)
+      assert.equal("Euro", config.currency.name)
+    end)
+  end)
+
   describe('loadFile', function()
     after_each(function()
       _G.love = nil
