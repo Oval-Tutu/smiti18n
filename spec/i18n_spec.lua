@@ -6,6 +6,56 @@ describe('i18n', function()
 
   before_each(function() i18n.reset() end)
 
+  describe('locale files', function()
+    before_each(function()
+      i18n.reset()
+    end)
+
+    -- Helper to get list of locale files
+    local function getLocaleFiles()
+      local files = {}
+      local handle = io.popen('ls locales/*.lua')
+      local result = handle:read("*a")
+      handle:close()
+      for file in result:gmatch("[^\n]+") do
+        table.insert(files, file)
+      end
+      return files
+    end
+
+    it('can load all locale files', function()
+      local files = getLocaleFiles()
+      assert.is_true(#files > 0, "No locale files found in locales/ directory")
+
+      for _, file in ipairs(files) do
+        print("Testing " .. file)
+
+        -- Load the file
+        local chunk, err = loadfile(file)
+        assert.is_nil(err, "Error loading " .. file .. ": " .. tostring(err))
+
+        -- Execute the chunk
+        local ok, result = pcall(chunk)
+        assert.is_true(ok, "Error executing " .. file)
+        assert.is_table(result, file .. " should return a table")
+
+        -- Get language code from filename
+        local langCode = file:match("locales/([^/]+)%.lua$"):gsub("%.lua$", "")
+
+        -- Verify basic structure
+        assert.is_table(result[langCode], file .. " should have language code table")
+
+        -- Optional _formats check
+        if result[langCode]._formats then
+          assert.is_table(result[langCode]._formats, file .. " _formats should be a table if present")
+        end
+
+        -- Load into i18n
+        i18n.load(result)
+      end
+    end)
+  end)
+
   describe('translate/set', function()
     it('sets a value in the internal store', function()
       i18n.set('en.foo','var')
