@@ -70,6 +70,7 @@ local function round(val, decimal)
 end
 
 local function formatNum(amount, digits, separator, decimal)
+  digits = tonumber(digits) or 0  -- Ensure digits is a number
   local famount = math.floor(math.abs(round(amount, digits)))
   local remain = round(math.abs(amount) - famount, digits)
   local formatted = separateThousand(famount, separator)
