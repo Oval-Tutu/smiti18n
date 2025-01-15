@@ -102,6 +102,9 @@ your-project/
   │       ├── plural.lua
   │       ├── variants.lua
   │       └── version.lua
+  ├── locales/
+  │   ├── en-UK.lua
+  │   └── other-locale-files.lua
   └── main.lua
 ```
 
@@ -110,6 +113,8 @@ your-project/
 ```lua
 -- Require smiti18n in your code
 local i18n = require 'lib.smiti18n'
+i18n.loadFile('locales/en-UK.lua')
+i18n.setLocale('en-UK')
 ```
 
 ### Translation Files
@@ -150,7 +155,7 @@ Organize translations by language (recommended for larger projects):
 Here's an example project structure:
 
 ```
-i18n/
+locales/
   ├── en.lua   -- English translations
   ├── es.lua   -- Spanish translations
   └── fr.lua   -- French translations
@@ -171,9 +176,9 @@ return {
 
 ```lua
 …
-i18n.loadFile('i18n/en.lua') -- English translation
-i18n.loadFile('i18n/es.lua') -- Spanish translation
-i18n.loadFile('i18n/fr.lua') -- French translation
+i18n.loadFile('locales/en.lua') -- English translation
+i18n.loadFile('locales/es.lua') -- Spanish translation
+i18n.loadFile('locales/fr.lua') -- French translation
 …
 ```
 
