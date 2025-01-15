@@ -161,6 +161,7 @@ local function localizedTranslate(key, loc, data)
 end
 
 local function concat(arr1, arr2)
+  if not arr2 then return arr1 end
   for i = 1, #arr2 do
     arr1[#arr1 + i] = arr2[i]
   end
