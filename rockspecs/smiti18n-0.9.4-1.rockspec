@@ -1,6 +1,7 @@
 local _version = "0.9.4"
 local _revision = "1"
 
+rockspec_format = "3.0"
 package = "smiti18n"
 version = _version .. "-" .. _revision
 source = {
