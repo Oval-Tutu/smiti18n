@@ -28,14 +28,15 @@ jobs:
         luaRocksVersion: "3.11.1"
     - name: Install dependencies
       run: |
-        luarocks install luacheck
         luarocks install busted
-        luarocks install luacov
+        luarocks install cluacov
         luarocks install inspect
-    - name: Run tests and checks
+        luarocks install luacheck
+        luarocks install luacov
+    - name: Run checks and tests
       run: |
         luacheck --no-unused-args --std max+busted smiti18n spec
-        busted --verbose --coverage
+        busted
     - name: Generate and show coverage report
       run: |
         luacov
