@@ -1,4 +1,4 @@
-require 'spec.fixPackagePath'
+package.path = package.path .. ';./?/init.lua'
 
 local i18n = require 'smiti18n'
 
@@ -28,7 +28,6 @@ describe('i18n', function()
       assert.is_true(#files > 0, "No locale files found in locales/ directory")
 
       for _, file in ipairs(files) do
-        print("Testing " .. file)
 
         -- Load the file
         local chunk, err = loadfile(file)
@@ -196,7 +195,6 @@ describe('i18n', function()
           assert.equal("1 chose.", i18n('message'))
         end)
       end)
-
     end)
   end)
 
@@ -267,7 +265,7 @@ describe('i18n', function()
     end)
 
     it("loads a bunch of stuff", function()
-      i18n.loadFile('spec/en-UK.lua')
+      i18n.loadFile('spec/data/en-UK.lua')
       i18n.setLocale('en-UK')
       assert.equal('Hello!', i18n('hello'))
       local balance = i18n('balance', {value = 0})
@@ -320,7 +318,7 @@ describe('i18n', function()
 
     it('falls back to standard Lua IO when love has no filesystem', function()
       _G.love = {}
-      i18n.loadFile('spec/en-UK.lua')
+      i18n.loadFile('spec/data/en-UK.lua')
       i18n.setLocale('en-UK')
       assert.equal('Hello!', i18n('hello'))
     end)
@@ -332,10 +330,19 @@ describe('i18n', function()
       end, "Could not load i18n file:")
     end)
 
-    it('errors when file returns non-table', function()
+    it('errors when file returns non-table value', function()
+      -- Create temp test file
+      local f = io.open('spec/temp_invalid.lua', 'w')
+      f:write('return 123')
+      f:close()
+
+      -- Test error handling
       assert.error_matches(function()
-        i18n.loadFile('spec/invalid_return.lua')
+        i18n.loadFile('spec/temp_invalid.lua')
       end, "i18n file must return a table")
+
+      -- Cleanup
+      os.remove('spec/temp_invalid.lua')
     end)
 
     it('errors when LÖVE file returns non-table', function()
@@ -492,7 +499,7 @@ describe('i18n', function()
     end)
 
     it("does NOT modify loadFile", function()
-      i18n.loadFile('spec/en-UK.lua')
+      i18n.loadFile('spec/data/en-UK.lua')
       i18n.setLocale('en-UK')
       assert.equal('Hello!', i18n('hello'))
     end)

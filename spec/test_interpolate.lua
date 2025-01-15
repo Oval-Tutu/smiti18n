@@ -1,5 +1,3 @@
-require 'spec.fixPackagePath'
-
 local interpolate = require 'smiti18n.interpolate'
 
 describe('smiti18n.interpolate', function()
