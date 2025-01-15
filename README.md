@@ -22,7 +22,7 @@ smiti18n (*pronounced smitten*) is a powerful internationalization (i18n) librar
 - 🎯 53 locales, 650+ game-specific phrases
 - 📊 36 regional number formats
 
-An intuitive API for managing translations forked from [i18n.lua](https://github.com/kikito/i18n.lua) by Enrique García Cota incorporated a [collection of community contributions](https://github.com/kikito/i18n.lua/pulls).
+An intuitive API for managing translations forked from [i18n.lua](https://github.com/kikito/i18n.lua) by Enrique García Cota incorporating a [collection of community contributions](https://github.com/kikito/i18n.lua/pulls).
 The number, date and time formatting has been ported from [Babel](https://github.com/LuaDist-testing/babel). Includes translations from [PolyglotGamedev](https://github.com/PolyglotGamedev). Significantly expanded test coverage and documentation.
 
 ### Requirements

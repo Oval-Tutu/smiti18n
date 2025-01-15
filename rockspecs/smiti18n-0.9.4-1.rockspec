@@ -10,19 +10,26 @@ source = {
 description = {
   summary = "A very complete internationalization library for Lua with LÖVE support",
   detailed = [[
-smiti18n (pronouced smitten) is a powerful internationalization (i18n) library that helps you create multilingual applications in Lua and LÖVE.
+smiti18n (pronounced smitten) is a powerful internationalization (i18n) library that helps you create multilingual applications in Lua and LÖVE.
 
-Forked from i18n.lua by Enrique García Cota and includes new features and improvements.
+**Core Features:**
+- Smart file-based loading & fallbacks
+- Rich text interpolation & pluralization
+- Locale-aware formatting for numbers, dates and currency
+- Built for LÖVE game engine
 
-It provides an intuitive API for managing translations, with support for:
+**Rich Game Content:**
+- Complex dialogue support:
+  - Branching conversations
+  - Character-specific translations
+  - Context-aware responses
+- 53 locales, 650+ game-specific phrases
+- 36 regional number formats
 
-- Variable interpolation in strings
-- Pluralization rules for many languages
-- Hierarchical organization of translations
-- Multiple locale fallbacks
-- Array-based translations
-- File-based translation loading
-- Seamless LÖVE game engine integration for filesystem paths
+An intuitive API for managing translations forked from i18n.lua by Enrique García Cota incorporating a collection of community contributions.
+The number, date and time formatting has been ported from Babel.
+Includes translations from PolyglotGamedev.
+Significantly expanded test coverage and documentation.
 
 Requirements
 - Lua 5.1-5.4 or LuaJIT 2.0-2.1
@@ -38,9 +45,13 @@ dependencies = {
 build = {
   type = "builtin",
   modules = {
+    ["smiti18n.format"]       = "smiti18n/format.lua",
     ["smiti18n.init"]         = "smiti18n/init.lua",
+    ["smiti18n.interpolate"]  = "smiti18n/interpolate.lua",
     ["smiti18n.plural"]       = "smiti18n/plural.lua",
-    ["smiti18n.variants"]     = "smiti18n/variants.lua",
-    ["smiti18n.interpolate"]  = "smiti18n/interpolate.lua"
+    ["smiti18n.variants"]     = "smiti18n/variants.lua"
+  },
+  copy_directories = {
+    "locales"
   }
 }
