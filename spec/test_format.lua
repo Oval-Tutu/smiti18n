@@ -1,5 +1,4 @@
--- spec/i18n_format_spec.lua
-require 'spec.fixPackagePath'
+package.path = package.path .. ';./?/init.lua'
 
 local format = require 'smiti18n.format'
 local i18n = require 'smiti18n'

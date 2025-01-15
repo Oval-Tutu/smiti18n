@@ -1,5 +1,3 @@
-require 'spec.fixPackagePath'
-
 local plural = require 'smiti18n.plural'
 
 describe('smiti18n.plural', function()
