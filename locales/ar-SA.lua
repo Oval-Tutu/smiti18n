@@ -2,8 +2,6 @@ return {
   ["ar-SA"] = {
     _formats = {
       currency = {
-        positive_format = "%c %p%q",
-        negative_format = "%c %p%q",
         symbol = "MAD",
         name = "Dirham Marocain",
         short_name = "MAD",
@@ -12,33 +10,69 @@ return {
         fract_digits = 2,
         positive_symbol = "",
         negative_symbol = "-",
+        positive_format = "%c %p%q",
+        negative_format = "%c %p%q",
       },
       number = {
-        decimal_symbol = ",",
-        thousand_separator = " ",
         fract_digits = 2,
         positive_symbol = "",
         negative_symbol = "-",
+        decimal_symbol = ",",
+        thousand_separator = " ",
       },
       date_time = {
+        long_date = "%l %d %F %Y",
         short_date = "%d/%m/%Y",
         long_time = "%g:%i:%s %a",
         short_date_time = "%d/%m/%Y %g:%i %a",
         short_time = "%g:%i %a",
         long_date_time = "%l %d %F %Y %g:%i:%s %a",
-        long_date = "%l %d %F %Y",
       },
       short_month_names = {
-        "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"
+        "يناير",
+        "فبراير",
+        "مارس",
+        "أبريل",
+        "مايو",
+        "يونيو",
+        "يوليو",
+        "أغسطس",
+        "سبتمبر",
+        "أكتوبر",
+        "نوفمبر",
+        "ديسمبر",
       },
       long_month_names = {
-        "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"
+        "يناير",
+        "فبراير",
+        "مارس",
+        "أبريل",
+        "مايو",
+        "يونيو",
+        "يوليو",
+        "أغسطس",
+        "سبتمبر",
+        "أكتوبر",
+        "نوفمبر",
+        "ديسمبر",
       },
       short_day_names = {
-        "الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"
+        "الأحد",
+        "الاثنين",
+        "الثلاثاء",
+        "الأربعاء",
+        "الخميس",
+        "الجمعة",
+        "السبت",
       },
       long_day_names = {
-        "الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"
+        "الأحد",
+        "الاثنين",
+        "الثلاثاء",
+        "الأربعاء",
+        "الخميس",
+        "الجمعة",
+        "السبت",
       },
     }
   }

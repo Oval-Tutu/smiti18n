@@ -35,7 +35,7 @@ jobs:
         luarocks install luacov
     - name: Run checks and tests
       run: |
-        luacheck --no-unused-args --std max+busted smiti18n spec
+        luacheck --no-unused-args --std max+busted locales smiti18n spec
         busted
     - name: Generate and show coverage report
       run: |
