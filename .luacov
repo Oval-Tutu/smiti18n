@@ -1,10 +1,10 @@
 return {
   include = {
-    'smiti18n/',
-    'spec/'
+    "smiti18n/.*"
   },
   exclude = {
-    'lua_install',
-    '.luarocks'
+    ".luarocks/.*",
+    "spec/.*",
+    "spec/data/.*"
   }
 }

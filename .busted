@@ -1,0 +1,8 @@
+return {
+  default = {
+    ROOT = {"spec"},
+    pattern = "test_.*%.lua$",
+    coverage = true,
+    verbose = true
+  }
+}
