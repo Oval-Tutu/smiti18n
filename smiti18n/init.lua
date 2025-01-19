@@ -26,12 +26,14 @@ i18n._VERSION = version
 
 -- private stuff
 
+-- Pre-compile frequently used patterns
+local DOTPLIT_PATTERN = "[^%.]+"
 local function dotSplit(str)
-  local fields, length = {},0
-    str:gsub("[^%.]+", function(c)
+  local fields, length = {}, 0
+  for part in str:gmatch(DOTPLIT_PATTERN) do
     length = length + 1
-    fields[length] = c
-  end)
+    fields[length] = part
+  end
   return fields, length
 end
 
