@@ -2,7 +2,8 @@
 
 A very complete internationalization library for Lua with LÖVE support 🌕💕
 
-[![Test 🧪](https://github.com/Oval-Tutu/smiti18n/actions/workflows/ci.yml/badge.svg)](https://github.com/Oval-Tutu/smiti18n/actions/workflows/ci.yml) [![Lua Versions](https://img.shields.io/badge/Lua-5.1%20%7C%205.2%20%7C%205.3%20%7C%205.4%20%7C%20JIT-blue)](https://github.com/Oval-Tutu/smiti18n) [![LuaRocks](https://img.shields.io/luarocks/v/flexiondotorg/smiti18n)](https://luarocks.org/modules/flexiondotorg/smiti18n) [![License](https://img.shields.io/github/license/Oval-Tutu/smiti18n)](https://github.com/Oval-Tutu/smiti18n/blob/master/LICENSE)
+[![Test 🧪](https://github.com/Oval-Tutu/smiti18n/actions/workflows/ci.yml/badge.svg)](https://github.com/Oval-Tutu/smiti18n/actions/workflows/ci.yml) [![Lua Versions](https://img.shields.io/badge/Lua-5.1%20%7C%205.2%20%7C%205.3%20%7C%205.4%20%7C%20JIT-24a6db)](https://github.com/Oval-Tutu/smiti18n) [![LÖVE Versions](https://img.shields.io/badge/L%C3%96VE-11.x-e14895)](https://love2d.org) [![LuaRocks](https://img.shields.io/luarocks/v/flexiondotorg/smiti18n?color=2b3c64)](https://luarocks.org/modules/flexiondotorg/smiti18n) [![License](https://img.shields.io/github/license/Oval-Tutu/smiti18n?color=a01830)](https://github.com/Oval-Tutu/smiti18n/blob/master/LICENSE)
+
 
 ## Introduction
 
