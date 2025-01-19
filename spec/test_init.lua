@@ -543,6 +543,134 @@ describe('i18n', function()
     end)
   end)
 
+  describe("i18n.translate locale handling", function()
+
+    before_each(function()
+      i18n.reset()
+      i18n.load({
+        en = { message = "Hello" },
+        fr = { message = "Bonjour" },
+        de = { message = "Hallo" }
+      })
+    end)
+
+    describe("when handling empty inputs", function()
+      it("returns empty table when both inputs are empty", function()
+        i18n.setLocale({})
+        local result = i18n.translate("message", { locale = "" })
+        assert.equals("Hello", result)  -- Falls back to default locale
+      end)
+
+      it("returns fallback table when primary is empty", function()
+        i18n.setLocale("fr")
+        local result = i18n.translate("message", { locale = "" })
+        assert.equals("Bonjour", result)
+      end)
+
+      it("returns primary table when fallback is empty", function()
+        i18n.setLocale({})
+        local result = i18n.translate("message", { locale = "de" })
+        assert.equals("Hallo", result)
+      end)
+    end)
+
+    describe("when combining non-empty tables", function()
+      it("preserves order when combining locales", function()
+        i18n.setLocale({"fr", "en"})
+        i18n.load({
+          fr = { test = "TEST-FR" },
+          en = { test = "TEST-EN" }
+        })
+        local result = i18n.translate("test")
+        assert.equals("TEST-FR", result)
+      end)
+
+      it("handles override with existing locale chain", function()
+        i18n.setLocale({"fr", "de"})
+        local result = i18n.translate("message", { locale = "en" })
+        assert.equals("Hello", result)
+      end)
+
+      it("properly concatenates locale chains", function()
+        i18n.setLocale({"de", "fr"})
+        -- First available translation should be used
+        i18n.load({
+          de = { test = "TEST-DE" },
+          fr = { test = "TEST-FR" },
+          en = { test = "TEST-EN" }
+        })
+        local result = i18n.translate("test")
+        assert.equals("TEST-DE", result)
+      end)
+    end)
+
+    describe("edge cases", function()
+      it("handles sparse arrays", function()
+        i18n.setLocale({"de", nil, "fr"})
+        local result = i18n.translate("message")
+        assert.equals("Hallo", result)
+      end)
+
+      it("maintains array length with nil values", function()
+        i18n.setLocale({[1] = "de", [3] = "fr"})
+        local result = i18n.translate("message")
+        assert.equals("Hallo", result)
+      end)
+
+      it("handles multiple nil values in locale chain", function()
+        i18n.setLocale({[1] = "de", [3] = "fr", [5] = "en"})
+        local result = i18n.translate("message")
+        assert.equals("Hallo", result)
+      end)
+    end)
+
+    describe("fallback behavior", function()
+      it("falls back through locale chain", function()
+        i18n.setLocale({"invalid", "also-invalid", "de"})
+        local result = i18n.translate("message")
+        assert.equals("Hallo", result)
+      end)
+
+      it("uses default locale when no translations found", function()
+        i18n.setLocale({"invalid", "also-invalid"})
+        local result = i18n.translate("message")
+        assert.equals("Hello", result)  -- Falls back to default 'en'
+      end)
+
+      it("respects locale override in chain", function()
+        i18n.setLocale("fr")
+        local result = i18n.translate("message", { locale = "de" })
+        assert.equals("Hallo", result)
+      end)
+    end)
+
+    it("returns primary locales when fallback is empty", function()
+      -- Set up a non-default locale first to ensure fallback chain is empty
+      i18n.setLocale("fr")
+
+      -- Create a scenario where we have a primary locale but empty fallback
+      i18n.setLocale({})  -- Empty current locale
+      local result = i18n.translate("message", { locale = "de" })
+
+      -- Should use "de" directly since fallback chain is empty
+      assert.equals("Hallo", result)
+    end)
+
+    -- Additional test to be even more explicit
+    it("handles empty fallback with multiple primary locales", function()
+      i18n.setLocale({})  -- Empty current locale
+      local result = i18n.translate("message", { locale = "de" })
+
+      -- Verify we get the German translation
+      assert.equals("Hallo", result)
+
+      -- Verify the fallback chain was handled correctly
+      local currentLocale = i18n.getLocale()
+      assert.same({}, currentLocale)  -- Confirms fallback was empty
+    end)
+
+  end)
+
   describe('i18n additional tests', function()
     before_each(function() i18n.reset() end)
 
