@@ -160,12 +160,35 @@ local function localizedTranslate(key, loc, data)
   return treatNode(node, loc, data)
 end
 
-local function concat(arr1, arr2)
-  if not arr2 then return arr1 end
-  for i = 1, #arr2 do
-    arr1[#arr1 + i] = arr2[i]
+local function appendLocales(primaryLocales, fallbackLocales)
+  local primaryLen = #primaryLocales
+  local fallbackLen = #fallbackLocales
+  -- If both tables are empty, return am empty table
+  if primaryLen == 0 and fallbackLen == 0 then
+    return {}
   end
-  return arr1
+
+  -- If primary is empty, return fallback
+  if primaryLen == 0 then
+    return fallbackLocales
+  end
+
+  -- If fallback is empty, return primary
+  if fallbackLen == 0 then
+    return primaryLocales
+  end
+
+  local result = {}
+
+  for i = 1, primaryLen do
+      result[i] = primaryLocales[i]
+  end
+
+  for i = 1, fallbackLen do
+      result[primaryLen + i] = fallbackLocales[i]
+  end
+
+  return result
 end
 
 -- public interface
@@ -197,9 +220,9 @@ function i18n.translate(key, data)
     locales = {locale}
   end
   if isPresent(data.locale) then
-    usedLocales = concat({data.locale}, locales)
+    usedLocales = appendLocales({data.locale}, locales)
   else
-    usedLocales = concat({}, locales)
+    usedLocales = appendLocales({}, locales)
   end
 
   table.insert(usedLocales, fallbackLocale)
