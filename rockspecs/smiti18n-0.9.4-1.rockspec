@@ -5,7 +5,7 @@ rockspec_format = "3.0"
 package = "smiti18n"
 version = _version .. "-" .. _revision
 source = {
-  url = ("https://github.com/Oval-Tutu/smiti18n/archive/v%s.tar.gz"):format(_version),
+  url = ("https://github.com/Oval-Tutu/smiti18n/archive/%s.tar.gz"):format(_version),
   dir = ("smiti18n-%s"):format(_version)
 }
 description = {
