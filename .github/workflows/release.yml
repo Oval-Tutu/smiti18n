@@ -37,6 +37,13 @@ jobs:
               ls -la rockspecs/*.rockspec
               exit 1
           fi
+          SRC_VERSION=$(cut -d"'" -f 2 smiti18n/version.lua | sed 's/"//g')
+          if [ "${VERSION}" != "${SRC_VERSION}" ]; then
+              echo "ERROR: Version mismatch between tag and source"
+              echo "Tag: ${VERSION}"
+              echo "Lua: ${SRC_VERSION}"
+              exit 1
+          fi
 
   publish-release:
     needs: [version-check]
