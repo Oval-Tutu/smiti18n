@@ -19,7 +19,7 @@ jobs:
       matrix:
         lua-version: ${{ github.actor == 'nektos/act' && fromJSON('["5.1"]') || fromJSON('["5.1", "5.2", "5.3", "5.4", "luajit"]') }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - uses: jkl1337/gh-actions-lua@v11
       with:
         luaVersion: "${{ matrix.lua-version }}"
