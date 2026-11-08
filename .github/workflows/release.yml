@@ -20,7 +20,7 @@ jobs:
     name: "Check versions ⚖️"
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: "Compare Rockspec and Git versions 🟰"
@@ -50,7 +50,7 @@ jobs:
     name: "Publish Release 📤️"
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: "Publish release"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -66,7 +66,7 @@ jobs:
     name: "Publish Rockspec 🪨"
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: "Setup Lua"
         uses: jkl1337/gh-actions-lua@v11
         with:
